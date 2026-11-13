@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - El Rancho Mexican Restaurant</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Lato:wght@300;400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    @await RenderSectionAsync("Styles", required: false)
+</head>
+<body>
+
+    <!-- ─── Navbar ─────────────────────────────────────────────── -->
+    <nav class="navbar navbar-expand-lg navbar-dark sticky-top" id="mainNavbar">
+        <div class="container">
+            <a class="navbar-brand" asp-controller="Home" asp-action="Index">
+                <span class="brand-icon">🌮</span>
+                <span class="brand-name">El Rancho</span>
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" asp-controller="Home" asp-action="Index">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" asp-controller="Menu" asp-action="Index">Menu</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" asp-controller="Home" asp-action="About">About</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" asp-controller="Home" asp-action="Contact">Contact</a>
+                    </li>
+                    @if (User.IsInRole("Admin"))
+                    {
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle text-warning" href="#" data-bs-toggle="dropdown">
+                                <i class="fas fa-cog"></i> Admin
+                            </a>
+                            <ul class="dropdown-menu dropdown-menu-dark">
+                                <li><a class="dropdown-item" asp-controller="Admin" asp-action="Index">Dashboard</a></li>
+                                <li><a class="dropdown-item" asp-controller="Admin" asp-action="MenuItems">Menu Items</a></li>
+                                <li><a class="dropdown-item" asp-controller="Admin" asp-action="Orders">All Orders</a></li>
+                            </ul>
+                        </li>
+                    }
+                </ul>
+                <ul class="navbar-nav align-items-center gap-2">
+                    @if (User.Identity?.IsAuthenticated == true)
+                    {
+                        <li class="nav-item">
+                            <a class="nav-link" asp-controller="Cart" asp-action="Index">
+                                <i class="fas fa-shopping-cart"></i>
+                                <span class="cart-badge" id="cartCount">0</span>
+                            </a>
+                        </li>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown">
+                                <i class="fas fa-user-circle me-1"></i>@User.Identity.Name
+                            </a>
+                            <ul class="dropdown-menu dropdown-menu-end dropdown-menu-dark">
+                                <li><a class="dropdown-item" asp-controller="Order" asp-action="History">My Orders</a></li>
+                                <li><hr class="dropdown-divider"></li>
+                                <li>
+                                    <form asp-controller="Account" asp-action="Logout" method="post">
+                                        @Html.AntiForgeryToken()
+                                        <button type="submit" class="dropdown-item text-danger">
+                                            <i class="fas fa-sign-out-alt me-1"></i>Logout
+                                        </button>
+                                    </form>
+                                </li>
+                            </ul>
+                        </li>
+                    }
+                    else
+                    {
+                        <li class="nav-item">
+                            <a class="nav-link" asp-controller="Account" asp-action="Login">Login</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="btn btn-outline-warning btn-sm" asp-controller="Account" asp-action="Register">Register</a>
+                        </li>
+                    }
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- ─── Alert Messages ─────────────────────────────────────── -->
+    <div class="container mt-3">
+        @if (TempData["Success"] != null)
+        {
+            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                <i class="fas fa-check-circle me-2"></i>@TempData["Success"]
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+        }
+        @if (TempData["Error"] != null)
+        {
+            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                <i class="fas fa-exclamation-circle me-2"></i>@TempData["Error"]
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+        }
+        @if (TempData["Warning"] != null)
+        {
+            <div class="alert alert-warning alert-dismissible fade show" role="alert">
+                <i class="fas fa-exclamation-triangle me-2"></i>@TempData["Warning"]
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+        }
+    </div>
+
+    <!-- ─── Main Content ───────────────────────────────────────── -->
+    <main role="main">
+        @RenderBody()
+    </main>
+
+    <!-- ─── Footer ─────────────────────────────────────────────── -->
+    <footer class="site-footer mt-5">
+        <div class="container">
+            <div class="row py-4">
+                <div class="col-md-4 mb-3">
+                    <h5 class="brand-name">🌮 El Rancho</h5>
+                    <p class="text-muted small">Authentic Mexican flavors made with love. Fresh ingredients, bold spices, unforgettable taste.</p>
+                </div>
+                <div class="col-md-4 mb-3">
+                    <h6>Quick Links</h6>
+                    <ul class="list-unstyled small">
+                        <li><a asp-controller="Menu" asp-action="Index" class="footer-link">Menu</a></li>
+                        <li><a asp-controller="Home" asp-action="About" class="footer-link">About Us</a></li>
+                        <li><a asp-controller="Home" asp-action="Contact" class="footer-link">Contact</a></li>
+                    </ul>
+                </div>
+                <div class="col-md-4 mb-3">
+                    <h6>Hours</h6>
+                    <p class="small text-muted">Mon–Thu: 11am – 9pm<br>Fri–Sat: 11am – 11pm<br>Sunday: 12pm – 8pm</p>
+                </div>
+            </div>
+            <hr class="border-secondary">
+            <p class="text-center text-muted small pb-2">© @DateTime.Now.Year El Rancho Mexican Restaurant. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+
+    @if (User.Identity?.IsAuthenticated == true)
+    {
+        <script>
+            // Update cart count in navbar
+            fetch('/Cart/Count')
+                .then(r => r.json())
+                .then(count => {
+                    const badge = document.getElementById('cartCount');
+                    if (badge) badge.textContent = count;
+                })
+                .catch(() => {});
+        </script>
+    }
+
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

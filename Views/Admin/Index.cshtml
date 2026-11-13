@@ -1,0 +1,116 @@
+@model AdminDashboardViewModel
+@{
+    ViewData["Title"] = "Admin Dashboard";
+}
+
+<section class="py-4" style="background:var(--dark2)">
+    <div class="container">
+        <h1 class="text-white mb-0"><i class="fas fa-chart-line me-3 text-mexican-yellow"></i>Admin Dashboard</h1>
+        <p class="text-muted mb-0">Mexican Restaurant Admin</p>
+    </div>
+</section>
+
+<section class="py-4">
+    <div class="container">
+
+        <!-- Stats Cards -->
+        <div class="row g-4 mb-5">
+            <div class="col-sm-6 col-lg-3">
+                <div class="stat-card" style="background:linear-gradient(135deg,#e74c3c,#c0392b);color:white">
+                    <div class="stat-icon">📦</div>
+                    <div class="stat-value">@Model.TotalOrders</div>
+                    <div class="stat-label" style="color:rgba(255,255,255,.7)">Total Orders</div>
+                </div>
+            </div>
+            <div class="col-sm-6 col-lg-3">
+                <div class="stat-card" style="background:linear-gradient(135deg,#27ae60,#1e8449);color:white">
+                    <div class="stat-icon">💵</div>
+                    <div class="stat-value">$@Model.TotalRevenue.ToString("N0")</div>
+                    <div class="stat-label" style="color:rgba(255,255,255,.7)">Total Revenue</div>
+                </div>
+            </div>
+            <div class="col-sm-6 col-lg-3">
+                <div class="stat-card" style="background:linear-gradient(135deg,#3498db,#2980b9);color:white">
+                    <div class="stat-icon">👥</div>
+                    <div class="stat-value">@Model.TotalCustomers</div>
+                    <div class="stat-label" style="color:rgba(255,255,255,.7)">Total Customers</div>
+                </div>
+            </div>
+            <div class="col-sm-6 col-lg-3">
+                <div class="stat-card" style="background:linear-gradient(135deg,#f39c12,#e67e22);color:white">
+                    <div class="stat-icon">⏳</div>
+                    <div class="stat-value">@Model.PendingOrders</div>
+                    <div class="stat-label" style="color:rgba(255,255,255,.7)">Pending Orders</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Quick Actions -->
+        <div class="row g-3 mb-5">
+            <div class="col-auto">
+                <a asp-controller="Admin" asp-action="MenuItems" class="btn btn-outline-secondary">
+                    <i class="fas fa-utensils me-2"></i>Manage Menu
+                </a>
+            </div>
+            <div class="col-auto">
+                <a asp-controller="Admin" asp-action="CreateMenuItem" class="btn btn-outline-success">
+                    <i class="fas fa-plus me-2"></i>Add Menu Item
+                </a>
+            </div>
+            <div class="col-auto">
+                <a asp-controller="Admin" asp-action="Orders" class="btn btn-outline-primary">
+                    <i class="fas fa-list me-2"></i>All Orders
+                </a>
+            </div>
+        </div>
+
+        <!-- Recent Orders -->
+        <h4 class="mb-3">Recent Orders</h4>
+        @if (!Model.RecentOrders.Any())
+        {
+            <p class="text-muted">No orders yet.</p>
+        }
+        else
+        {
+            <div class="table-responsive">
+                <table class="table cart-table shadow-sm">
+                    <thead>
+                        <tr>
+                            <th>Order #</th>
+                            <th>Customer</th>
+                            <th>Date</th>
+                            <th>Total</th>
+                            <th>Status</th>
+                            <th>Paid</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var order in Model.RecentOrders)
+                        {
+                            <tr>
+                                <td class="fw-bold">#@order.Id</td>
+                                <td>@(order.User?.FullName ?? order.User?.Email ?? "Unknown")</td>
+                                <td>@order.OrderDate.ToString("MMM dd, HH:mm")</td>
+                                <td class="fw-bold text-mexican-red">$@order.TotalAmount.ToString("F2")</td>
+                                <td>
+                                    <span class="badge @(order.Status == OrderStatus.Paid ? "bg-success" : order.Status == OrderStatus.Pending ? "bg-secondary" : "bg-warning text-dark")">
+                                        @order.Status
+                                    </span>
+                                </td>
+                                <td>
+                                    @if (order.IsPaid) { <span class="badge bg-success">✓</span> }
+                                    else { <span class="badge bg-secondary">✗</span> }
+                                </td>
+                                <td>
+                                    <a asp-controller="Order" asp-action="Details" asp-route-id="@order.Id"
+                                       class="btn btn-sm btn-outline-secondary">View</a>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+    </div>
+</section>

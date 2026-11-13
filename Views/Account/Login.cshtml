@@ -1,0 +1,58 @@
+@model LoginViewModel
+@{
+    ViewData["Title"] = "Login";
+    Layout = "_Layout";
+}
+
+<section class="auth-wrapper">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-5">
+                <div class="auth-card">
+                    <div class="text-center mb-4">
+                        <div style="font-size:2.5rem">🌮</div>
+                        <h2>Welcome Back</h2>
+                        <p class="text-muted small">Sign in to your El Rancho account</p>
+                    </div>
+
+                    <form asp-action="Login" asp-route-returnUrl="@ViewData["ReturnUrl"]" method="post">
+                        @Html.AntiForgeryToken()
+                        <div asp-validation-summary="ModelOnly" class="alert alert-danger d-none"></div>
+
+                        <div class="mb-3">
+                            <label asp-for="Email" class="form-label">Email</label>
+                            <input asp-for="Email" class="form-control" placeholder="you@example.com" />
+                            <span asp-validation-for="Email" class="text-danger small"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="Password" class="form-label">Password</label>
+                            <input asp-for="Password" class="form-control" placeholder="••••••••" />
+                            <span asp-validation-for="Password" class="text-danger small"></span>
+                        </div>
+
+                        <div class="mb-4 form-check">
+                            <input asp-for="RememberMe" class="form-check-input" />
+                            <label asp-for="RememberMe" class="form-check-label">Remember me</label>
+                        </div>
+
+                        <button type="submit" class="btn w-100 py-2 fw-bold text-white"
+                                style="background:var(--red);border-radius:10px;border:none">
+                            <i class="fas fa-sign-in-alt me-2"></i>Login
+                        </button>
+                    </form>
+
+                    <hr class="my-4">
+                    <p class="text-center small text-muted mb-0">
+                        Don't have an account?
+                        <a asp-action="Register" class="text-mexican-orange fw-bold">Register now</a>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

@@ -1,0 +1,104 @@
+@model CheckoutViewModel
+@{
+    ViewData["Title"] = "Checkout";
+}
+
+<section class="py-5" style="background:linear-gradient(135deg,var(--dark2),#3d1a00);min-height:140px;display:flex;align-items:center">
+    <div class="container">
+        <h1 class="text-white mb-0"><i class="fas fa-credit-card me-3"></i>Checkout</h1>
+    </div>
+</section>
+
+<section class="py-5">
+    <div class="container">
+        <form asp-controller="Order" asp-action="PlaceOrder" method="post">
+            @Html.AntiForgeryToken()
+            <div class="row g-4">
+
+                <!-- Customer Info -->
+                <div class="col-lg-7">
+                    <div class="checkout-card mb-4">
+                        <h5 class="mb-4" style="color:var(--dark2)"><i class="fas fa-user me-2 text-mexican-orange"></i>Customer Information</h5>
+                        <div class="row g-3">
+                            <div class="col-12">
+                                <label asp-for="FullName" class="form-label"></label>
+                                <input asp-for="FullName" class="form-control" placeholder="Juan Dela Cruz" />
+                                <span asp-validation-for="FullName" class="text-danger small"></span>
+                            </div>
+                            <div class="col-12">
+                                <label asp-for="Email" class="form-label"></label>
+                                <input asp-for="Email" class="form-control" placeholder="you@example.com" />
+                                <span asp-validation-for="Email" class="text-danger small"></span>
+                            </div>
+                            <div class="col-12">
+                                <label asp-for="Address" class="form-label">Delivery Address</label>
+                                <input asp-for="Address" class="form-control" placeholder="123 Main Street" />
+                                <span asp-validation-for="Address" class="text-danger small"></span>
+                            </div>
+                            <div class="col-12">
+                                <label asp-for="Notes" class="form-label">Special Notes (optional)</label>
+                                <textarea asp-for="Notes" class="form-control" rows="2" placeholder="Allergies, extra spicy, etc."></textarea>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Payment Note -->
+                    <div class="checkout-card" style="background:#f0faf4;border:2px solid #27ae60">
+                        <div class="d-flex align-items-center gap-3">
+                            <div style="font-size:2.5rem">🔒</div>
+                            <div>
+                                <h6 class="mb-1">Secure Payment via Stripe</h6>
+                                <p class="mb-0 small text-muted">You will be redirected to Stripe's secure payment page after clicking "Place Order". We accept Visa, Mastercard, and American Express.</p>
+                            </div>
+                        </div>
+                        <div class="mt-3 d-flex gap-2">
+                            <img src="https://cdn.jsdelivr.net/gh/nicholaswile/My-Portfolio@main/assets/visa.png" alt="Visa" height="28" onerror="this.style.display='none'">
+                            <span class="badge bg-secondary">VISA</span>
+                            <span class="badge bg-secondary">Mastercard</span>
+                            <span class="badge bg-secondary">AMEX</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Order Summary -->
+                <div class="col-lg-5">
+                    <div class="order-summary-card">
+                        <h5 class="mb-4" style="color:var(--yellow);font-family:'Playfair Display',serif">Your Order</h5>
+                        @foreach (var item in Model.CartItems)
+                        {
+                            <div class="d-flex justify-content-between mb-2 small">
+                                <span>@item.MenuItem?.Name <span class="text-muted">×@item.Quantity</span></span>
+                                <span>$@item.Subtotal.ToString("F2")</span>
+                            </div>
+                        }
+                        <hr style="border-color:rgba(255,255,255,.15);margin:16px 0">
+                        <div class="summary-row">
+                            <span>Subtotal</span>
+                            <span>$@((Model.OrderTotal - Model.TaxAmount).ToString("F2"))</span>
+                        </div>
+                        <div class="summary-row">
+                            <span>Tax (8%)</span>
+                            <span>$@Model.TaxAmount.ToString("F2")</span>
+                        </div>
+                        <div class="total-row">
+                            <span>Total</span>
+                            <span>$@Model.OrderTotal.ToString("F2")</span>
+                        </div>
+                        <input type="hidden" asp-for="OrderTotal" />
+                        <input type="hidden" asp-for="TaxAmount" />
+                        <button type="submit" class="btn-checkout mt-4">
+                            <i class="fas fa-lock me-2"></i>Pay $@Model.OrderTotal.ToString("F2")
+                        </button>
+                        <p class="text-center mt-3 small" style="color:rgba(255,255,255,.5)">
+                            <i class="fab fa-stripe me-1"></i>Secured by Stripe
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</section>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

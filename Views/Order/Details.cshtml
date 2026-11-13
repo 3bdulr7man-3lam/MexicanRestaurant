@@ -1,0 +1,72 @@
+@model Order
+@{
+    ViewData["Title"] = $"Order #{Model.Id}";
+}
+
+<section class="py-5">
+    <div class="container" style="max-width:700px">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2>Order #@Model.Id</h2>
+            <span class="badge @(Model.IsPaid ? "bg-success" : "bg-secondary") fs-6">
+                @(Model.IsPaid ? "✓ Paid" : "Pending")
+            </span>
+        </div>
+        <div class="checkout-card mb-4">
+            <p class="mb-1 text-muted small">Ordered on @Model.OrderDate.ToString("MMMM dd, yyyy 'at' HH:mm")</p>
+            <p class="mb-1"><strong>Customer:</strong> @Model.User?.FullName</p>
+            <p class="mb-1"><strong>Delivery Address:</strong> @(Model.DeliveryAddress ?? "N/A")</p>
+            @if (!string.IsNullOrEmpty(Model.Notes))
+            {
+                <p class="mb-0"><strong>Notes:</strong> @Model.Notes</p>
+            }
+        </div>
+
+        <div class="checkout-card mb-4">
+            <h5 class="mb-3">Order Items</h5>
+            <table class="table">
+                <thead class="table-light">
+                    <tr>
+                        <th>Item</th>
+                        <th class="text-center">Qty</th>
+                        <th class="text-end">Price</th>
+                        <th class="text-end">Total</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var detail in Model.OrderDetails)
+                    {
+                        <tr>
+                            <td>@detail.ItemName</td>
+                            <td class="text-center">@detail.Quantity</td>
+                            <td class="text-end">$@detail.UnitPrice.ToString("F2")</td>
+                            <td class="text-end fw-bold">$@detail.LineTotal.ToString("F2")</td>
+                        </tr>
+                    }
+                </tbody>
+                <tfoot>
+                    <tr>
+                        <td colspan="3" class="text-end fw-bold">Subtotal</td>
+                        <td class="text-end">$@Model.SubTotal.ToString("F2")</td>
+                    </tr>
+                    <tr>
+                        <td colspan="3" class="text-end fw-bold">Tax (8%)</td>
+                        <td class="text-end">$@Model.TaxAmount.ToString("F2")</td>
+                    </tr>
+                    <tr class="table-warning">
+                        <td colspan="3" class="text-end fw-bold fs-5">Total</td>
+                        <td class="text-end fw-bold fs-5 text-mexican-red">$@Model.TotalAmount.ToString("F2")</td>
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
+
+        <div class="d-flex gap-3">
+            <a asp-controller="Order" asp-action="History" class="btn btn-outline-secondary">
+                <i class="fas fa-arrow-left me-2"></i>Back to Orders
+            </a>
+            <a asp-controller="Menu" asp-action="Index" class="btn-hero-primary d-inline-block">
+                Order Again
+            </a>
+        </div>
+    </div>
+</section>

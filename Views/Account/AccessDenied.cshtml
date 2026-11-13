@@ -1,0 +1,13 @@
+@{
+    ViewData["Title"] = "Access Denied";
+}
+<section class="result-page">
+    <div class="text-center">
+        <div class="result-icon">🚫</div>
+        <h1 style="color:var(--red)">Access Denied</h1>
+        <p class="text-muted mt-2 mb-4">You don't have permission to view this page.</p>
+        <a asp-controller="Home" asp-action="Index" class="btn-hero-primary">
+            <i class="fas fa-home me-2"></i>Go Home
+        </a>
+    </div>
+</section>

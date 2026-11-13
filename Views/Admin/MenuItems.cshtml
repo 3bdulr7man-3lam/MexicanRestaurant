@@ -1,0 +1,83 @@
+@model List<MenuItem>
+@{
+    ViewData["Title"] = "Manage Menu Items";
+}
+
+<section class="py-4" style="background:var(--dark2)">
+    <div class="container d-flex justify-content-between align-items-center">
+        <h1 class="text-white mb-0"><i class="fas fa-utensils me-3 text-mexican-yellow"></i>Menu Items</h1>
+        <a asp-action="CreateMenuItem" class="btn btn-outline-warning">
+            <i class="fas fa-plus me-2"></i>Add New Item
+        </a>
+    </div>
+</section>
+
+<section class="py-4">
+    <div class="container">
+        @if (!Model.Any())
+        {
+            <p class="text-muted">No menu items found. Add your first item!</p>
+        }
+        else
+        {
+            <div class="table-responsive">
+                <table class="table cart-table shadow-sm">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Category</th>
+                            <th>Price</th>
+                            <th>Available</th>
+                            <th>Featured</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model)
+                        {
+                            <tr>
+                                <td class="fw-bold">@item.Name</td>
+                                <td><span class="category-badge">@item.Category</span></td>
+                                <td class="text-mexican-red fw-bold">$@item.Price.ToString("F2")</td>
+                                <td>
+                                    @if (item.IsAvailable)
+                                    {
+                                        <span class="badge bg-success">Yes</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-danger">No</span>
+                                    }
+                                </td>
+                                <td>
+                                    @if (item.IsFeatured)
+                                    {
+                                        <span class="badge bg-warning text-dark">⭐ Featured</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="text-muted">—</span>
+                                    }
+                                </td>
+                                <td>
+                                    <a asp-action="EditMenuItem" asp-route-id="@item.Id"
+                                       class="btn btn-sm btn-outline-primary me-1">
+                                        <i class="fas fa-edit"></i> Edit
+                                    </a>
+                                    <form asp-action="DeleteMenuItem" method="post" class="d-inline"
+                                          onsubmit="return confirm('Delete @item.Name?')">
+                                        @Html.AntiForgeryToken()
+                                        <input type="hidden" name="id" value="@item.Id" />
+                                        <button type="submit" class="btn btn-sm btn-outline-danger">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    </form>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+    </div>
+</section>

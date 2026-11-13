@@ -1,0 +1,121 @@
+@model CartViewModel
+@{
+    ViewData["Title"] = "Your Cart";
+}
+
+<section class="py-5" style="background:linear-gradient(135deg,var(--dark2),#3d1a00);min-height:140px;display:flex;align-items:center">
+    <div class="container">
+        <h1 class="text-white mb-0"><i class="fas fa-shopping-cart me-3"></i>Your Cart</h1>
+    </div>
+</section>
+
+<section class="py-5">
+    <div class="container">
+        @if (!Model.CartItems.Any())
+        {
+            <div class="text-center py-5">
+                <div style="font-size:5rem">🛒</div>
+                <h3 class="mt-3">Your cart is empty</h3>
+                <p class="text-muted">Add some delicious items from our menu!</p>
+                <a asp-controller="Menu" asp-action="Index" class="btn-hero-primary mt-3 d-inline-block">
+                    <i class="fas fa-utensils me-2"></i>Browse Menu
+                </a>
+            </div>
+        }
+        else
+        {
+            <div class="row g-4">
+                <!-- Cart Items -->
+                <div class="col-lg-8">
+                    <div class="card border-0 shadow-sm rounded-4">
+                        <div class="card-body p-0">
+                            <table class="table cart-table mb-0">
+                                <thead>
+                                    <tr>
+                                        <th>Item</th>
+                                        <th class="text-center">Qty</th>
+                                        <th class="text-end">Price</th>
+                                        <th class="text-end">Subtotal</th>
+                                        <th></th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var item in Model.CartItems)
+                                    {
+                                        <tr>
+                                            <td>
+                                                <div class="cart-item-name">@item.MenuItem?.Name</div>
+                                                <div class="text-muted small">@item.MenuItem?.Category</div>
+                                            </td>
+                                            <td class="text-center">
+                                                <div class="qty-control justify-content-center">
+                                                    <!-- Decrease -->
+                                                    <form asp-controller="Cart" asp-action="UpdateQuantity" method="post">
+                                                        @Html.AntiForgeryToken()
+                                                        <input type="hidden" name="cartItemId" value="@item.Id" />
+                                                        <input type="hidden" name="quantity" value="@(item.Quantity - 1)" />
+                                                        <button type="submit" class="qty-btn">−</button>
+                                                    </form>
+                                                    <span class="fw-bold px-2">@item.Quantity</span>
+                                                    <!-- Increase -->
+                                                    <form asp-controller="Cart" asp-action="UpdateQuantity" method="post">
+                                                        @Html.AntiForgeryToken()
+                                                        <input type="hidden" name="cartItemId" value="@item.Id" />
+                                                        <input type="hidden" name="quantity" value="@(item.Quantity + 1)" />
+                                                        <button type="submit" class="qty-btn">+</button>
+                                                    </form>
+                                                </div>
+                                            </td>
+                                            <td class="text-end">$@item.MenuItem?.Price.ToString("F2")</td>
+                                            <td class="text-end fw-bold text-mexican-red">$@item.Subtotal.ToString("F2")</td>
+                                            <td class="text-end">
+                                                <form asp-controller="Cart" asp-action="Remove" method="post">
+                                                    @Html.AntiForgeryToken()
+                                                    <input type="hidden" name="cartItemId" value="@item.Id" />
+                                                    <button type="submit" class="btn btn-sm btn-link text-danger p-0"
+                                                            title="Remove item"
+                                                            onclick="return confirm('Remove this item?')">
+                                                        <i class="fas fa-trash-alt"></i>
+                                                    </button>
+                                                </form>
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <a asp-controller="Menu" asp-action="Index" class="btn btn-outline-secondary mt-3">
+                        <i class="fas fa-arrow-left me-2"></i>Continue Shopping
+                    </a>
+                </div>
+
+                <!-- Order Summary -->
+                <div class="col-lg-4">
+                    <div class="order-summary-card">
+                        <h5 class="mb-4" style="color:var(--yellow);font-family:'Playfair Display',serif">Order Summary</h5>
+                        <div class="summary-row">
+                            <span>Subtotal</span>
+                            <span>$@Model.Subtotal.ToString("F2")</span>
+                        </div>
+                        <div class="summary-row">
+                            <span>Tax (8%)</span>
+                            <span>$@Model.Tax.ToString("F2")</span>
+                        </div>
+                        <div class="total-row">
+                            <span>Total</span>
+                            <span>$@Model.Total.ToString("F2")</span>
+                        </div>
+                        <a asp-controller="Order" asp-action="Checkout"
+                           class="btn-checkout d-block text-center text-decoration-none mt-4">
+                            <i class="fas fa-lock me-2"></i>Proceed to Checkout
+                        </a>
+                        <p class="text-center mt-3 small" style="color:rgba(255,255,255,.5)">
+                            <i class="fab fa-stripe me-1"></i>Secure payment powered by Stripe
+                        </p>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</section>

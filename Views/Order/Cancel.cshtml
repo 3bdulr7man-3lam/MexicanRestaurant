@@ -1,0 +1,19 @@
+@{
+    ViewData["Title"] = "Payment Cancelled";
+}
+
+<section class="result-page">
+    <div class="text-center">
+        <div class="result-icon">❌</div>
+        <h1 style="color:var(--red);font-size:2.5rem">Payment Cancelled</h1>
+        <p class="text-muted mt-2 mb-4">Your payment was cancelled and you have not been charged.<br>Your order is still pending — try again when ready.</p>
+        <div class="d-flex gap-3 justify-content-center">
+            <a asp-controller="Cart" asp-action="Index" class="btn-hero-primary">
+                <i class="fas fa-shopping-cart me-2"></i>Back to Cart
+            </a>
+            <a asp-controller="Menu" asp-action="Index" class="btn-hero-secondary">
+                Browse Menu
+            </a>
+        </div>
+    </div>
+</section>

@@ -1,0 +1,173 @@
+@model List<MenuItem>
+@{
+    ViewData["Title"] = "Home";
+    Layout = "_Layout";
+}
+
+<!-- ─── Hero Section ───────────────────────────────────── -->
+<section class="hero">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-lg-6 hero-content">
+                <span class="hero-badge">🌶 Authentic Mexican Cuisine</span>
+                <h1>
+                    Authentic <span>Mexican</span><br>Flavor
+                </h1>
+                <p>Delicious. Fresh. Made with Love. Every dish is crafted from the finest ingredients and prepared fresh daily just for you.</p>
+                <div class="mt-4 d-flex flex-wrap gap-2">
+                    <a asp-controller="Menu" asp-action="Index" class="btn-hero-primary">
+                        <i class="fas fa-utensils me-2"></i>Order Now
+                    </a>
+                    <a asp-controller="Home" asp-action="About" class="btn-hero-secondary">
+                        Our Story
+                    </a>
+                </div>
+                <div class="d-flex gap-4 mt-5 text-white">
+                    <div>
+                        <div style="font-size:1.6rem;font-weight:700;color:var(--yellow)">500+</div>
+                        <div class="small" style="color:rgba(255,255,255,.6)">Happy Customers</div>
+                    </div>
+                    <div>
+                        <div style="font-size:1.6rem;font-weight:700;color:var(--yellow)">20+</div>
+                        <div class="small" style="color:rgba(255,255,255,.6)">Menu Items</div>
+                    </div>
+                    <div>
+                        <div style="font-size:1.6rem;font-weight:700;color:var(--yellow)">10yr</div>
+                        <div class="small" style="color:rgba(255,255,255,.6)">Experience</div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-6 text-center mt-4 mt-lg-0">
+                <div class="hero-emoji-float">🌮</div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ─── Features Strip ─────────────────────────────────── -->
+<section class="py-4" style="background:var(--orange)">
+    <div class="container">
+        <div class="row text-white text-center g-3">
+            <div class="col-md-3">
+                <i class="fas fa-leaf fa-2x mb-2"></i>
+                <div class="fw-bold">Fresh Ingredients</div>
+            </div>
+            <div class="col-md-3">
+                <i class="fas fa-fire fa-2x mb-2"></i>
+                <div class="fw-bold">Made to Order</div>
+            </div>
+            <div class="col-md-3">
+                <i class="fas fa-truck fa-2x mb-2"></i>
+                <div class="fw-bold">Fast Delivery</div>
+            </div>
+            <div class="col-md-3">
+                <i class="fas fa-shield-alt fa-2x mb-2"></i>
+                <div class="fw-bold">Secure Payment</div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ─── Featured Dishes ────────────────────────────────── -->
+<section class="py-5 mt-4">
+    <div class="container">
+        <h2 class="section-title">Popular Dishes</h2>
+        <div class="section-divider"></div>
+
+        @if (!Model.Any())
+        {
+            <div class="text-center text-muted py-5">
+                <i class="fas fa-utensils fa-3x mb-3 d-block"></i>
+                <p>No featured items yet. Check back soon!</p>
+            </div>
+        }
+        else
+        {
+            <div class="row g-4">
+                @foreach (var item in Model)
+                {
+                    <div class="col-sm-6 col-lg-3">
+                        <div class="menu-card card">
+                            <div class="menu-card-img-wrapper">
+                                @if (!string.IsNullOrEmpty(item.ImageUrl))
+                                {
+                                    <img src="@item.ImageUrl" class="card-img-top" alt="@item.Name"
+                                         onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+                                    <div class="card-img-placeholder" style="display:none">🌮</div>
+                                }
+                                else
+                                {
+                                    <div class="card-img-placeholder">
+                                        @(item.Category == "Tacos" ? "🌮" : item.Category == "Burritos" ? "🌯" : item.Category == "Nachos" ? "🧀" : "🥤")
+                                    </div>
+                                }
+                            </div>
+                            <div class="card-body d-flex flex-column">
+                                <span class="category-badge mb-2 align-self-start">@item.Category</span>
+                                <h5 class="card-title">@item.Name</h5>
+                                <p class="card-text flex-grow-1">@item.Description</p>
+                                <div class="d-flex justify-content-between align-items-center mt-3">
+                                    <span class="price-tag">$@item.Price.ToString("F2")</span>
+                                    @if (User.Identity?.IsAuthenticated == true)
+                                    {
+                                        <form asp-controller="Cart" asp-action="Add" method="post" class="d-inline">
+                                            @Html.AntiForgeryToken()
+                                            <input type="hidden" name="menuItemId" value="@item.Id" />
+                                            <input type="hidden" name="quantity" value="1" />
+                                            <button type="submit" class="btn-add-cart">
+                                                <i class="fas fa-cart-plus me-1"></i>Add
+                                            </button>
+                                        </form>
+                                    }
+                                    else
+                                    {
+                                        <a asp-controller="Account" asp-action="Login" class="btn-add-cart text-decoration-none text-center">
+                                            Login to Order
+                                        </a>
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        }
+
+        <div class="text-center mt-5">
+            <a asp-controller="Menu" asp-action="Index" class="btn-hero-primary">
+                <i class="fas fa-list me-2"></i>View Full Menu
+            </a>
+        </div>
+    </div>
+</section>
+
+<!-- ─── Why Us ─────────────────────────────────────────── -->
+<section class="py-5" style="background:var(--light)">
+    <div class="container">
+        <h2 class="section-title">Why Choose El Rancho?</h2>
+        <div class="section-divider"></div>
+        <div class="row g-4 text-center">
+            <div class="col-md-4">
+                <div class="p-4">
+                    <div style="font-size:3rem;margin-bottom:16px">👨‍🍳</div>
+                    <h5>Expert Chefs</h5>
+                    <p class="text-muted">Our recipes have been passed down through generations of Mexican culinary tradition.</p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="p-4">
+                    <div style="font-size:3rem;margin-bottom:16px">🥑</div>
+                    <h5>Fresh Daily</h5>
+                    <p class="text-muted">We source our vegetables, meats, and spices fresh every morning for maximum flavor.</p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="p-4">
+                    <div style="font-size:3rem;margin-bottom:16px">💳</div>
+                    <h5>Secure Checkout</h5>
+                    <p class="text-muted">Pay safely with Stripe-powered checkout. Your financial data is always protected.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>

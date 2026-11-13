@@ -1,0 +1,19 @@
+@{
+    ViewData["Title"] = "Payment Successful";
+}
+
+<section class="result-page">
+    <div class="text-center">
+        <div class="result-icon">✅</div>
+        <h1 style="color:var(--green);font-size:2.5rem">Payment Successful!</h1>
+        <p class="text-muted mt-2 mb-4">Thank you for your order! We're preparing your food now.<br>You'll receive a confirmation shortly.</p>
+        <div class="d-flex gap-3 justify-content-center">
+            <a asp-controller="Order" asp-action="History" class="btn-hero-primary">
+                <i class="fas fa-list me-2"></i>View My Orders
+            </a>
+            <a asp-controller="Menu" asp-action="Index" class="btn-hero-secondary">
+                Order Again
+            </a>
+        </div>
+    </div>
+</section>
